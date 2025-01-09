@@ -1,29 +1,30 @@
-NAME = so_long
-
-SRC = so_long.c
-OBJ = $(SRC:.c=.o)
+# Variables
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-LIBFT = ./libft/libft.a
-MLX = -L./minilibx-linux -lmlx -lXext -lX11 -lm
-INCLUDE = -I./minilibx-linux -I./libft -I.
+CFLAGS = -g -Wall -Wextra -Werror -I include -I minilibx_opengl -I libft
+LDFLAGS = -L minilibx_opengl -lmlx -framework OpenGL -framework AppKit
 
-all: $(NAME)
+# Archivos fuente y objetos
+SRC = srcs/so_long.c srcs/main.c srcs/map.c srcs/render.c srcs/events.c srcs/utils.c srcs/get_next_line.c srcs/get_next_line_utils.c
+OBJ = $(SRC:.c=.o)
 
-$(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(MLX) -o $(NAME)
+# Regla por defecto
+all: so_long
 
-$(LIBFT):
-	make -C ./libft
+# Regla para generar el ejecutable
+so_long: $(OBJ)
+	$(CC) -o so_long $(OBJ) $(LDFLAGS)
 
+# Regla para compilar los archivos .c en .o
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Limpiar los archivos objeto
 clean:
 	rm -f $(OBJ)
-	make clean -C ./libft
 
+# Limpiar todo (incluso el ejecutable)
 fclean: clean
-	rm -f $(NAME)
-	make fclean -C ./libft
+	rm -f so_long
 
+# Reconstruir todo desde cero
 re: fclean all
-
-.PHONY: all clean fclean re
